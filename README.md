@@ -1,78 +1,168 @@
-# Predictive-Maintenance-for-Milling-Machine
+# Predictive Maintenance Analysis
 
-Predictive Maintenance for Milling Machine
-Overview
-This project focuses on implementing a predictive maintenance model for milling machines. The goal is to predict potential failures and maintenance needs, ensuring that machines are maintained efficiently and downtime is minimized.
+## Overview
+This project implements a comprehensive data analysis pipeline for predictive maintenance using various machine learning approaches. The analysis includes exploratory data analysis (EDA), data preprocessing, outlier detection, clustering analysis, predictive modeling for machine failure prediction, and an interactive web interface for real-time predictions.
 
-Table of Contents
-Introduction
+## Table of Contents
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Dataset](#dataset)
+- [Features](#features)
+- [Analysis Pipeline](#analysis-pipeline)
+- [Machine Learning Models](#machine-learning-models)
+- [Clustering Analysis](#clustering-analysis)
+- [Interactive Interface](#interactive-interface)
+- [Usage](#usage)
+- [Results](#results)
 
-Dataset
+## Requirements
+- Python 3.x
+- pandas
+- numpy
+- matplotlib
+- seaborn
+- scikit-learn
+- ydata-profiling
+- yellowbrick
+- ipywidgets
+- imbalanced-learn (imblearn)
+- gradio
+- pickle
 
-Project Structure
+## Installation
+Install the required packages using pip:
 
-Installation
+```bash
+pip install pandas numpy matplotlib seaborn scikit-learn ydata-profiling yellowbrick ipywidgets imblearn gradio
+```
 
-Usage
+## Dataset
+The project uses the AI4I 2020 Predictive Maintenance Dataset with various failure types:
+- Tool wear failure (TWF): Occurs between 200-240 mins
+- Heat dissipation failure (HDF): When temperature difference < 8.6K and speed < 1380 rpm
+- Power failure (PWF): Power outside 3500W-9000W range
+- Overstrain failure (OSF): Product of tool wear and torque exceeds variant-specific threshold
+- Random failures (RNF): 0.1% random failure chance
 
-Results
+## Machine Learning Models
+### Decision Tree Classifier
+- Implemented with max_depth=8
+- Saved model for deployment using pickle
+- Used for the interactive interface
 
-Contributing
+### K-Nearest Neighbors (KNN)
+- Optimized using GridSearchCV
+- Best parameters: n_neighbors=2
+- Learning curve analysis
 
-License
+### Random Forest Classifier
+- 100 estimators
+- Bootstrap sampling
+- Parallel processing enabled
 
-Introduction
-Predictive maintenance is a technique used to predict when a machine or component is likely to fail so that maintenance can be performed just in time to prevent unexpected downtime. In this project, we use machine learning algorithms to build a predictive maintenance model for a milling machine.
+### Gradient Boosting Classifier
+- Default parameters
+- Learning curve analysis
+- Confusion matrix visualization
 
-Dataset
-The dataset used in this project includes various features collected from milling machines, such as:
+### Gaussian Naive Bayes
+- Probabilistic classifier
+- Performance evaluation with classification report
+- Learning curve analysis
 
-Temperature
+### Model Evaluation Metrics
+All models evaluated using:
+- Accuracy
+- Precision
+- Recall
+- F1-Score
+- Training time
+- Prediction time
+- Learning curves
+- Confusion matrices
 
-Vibration
+## Interactive Interface
+Built using Gradio framework for real-time predictions:
 
-Pressure
+### Features
+- Slider inputs for:
+  - Air temperature (100-350)
+  - Process temperature (100-350)
+- Numeric inputs for:
+  - Rotational speed
+  - Torque
+  - Tool wear
+- Radio button for Type (L/M/H)
 
-Tool usage time
+### Outputs
+- Failure probability predictions
+- Maintenance action recommendation
+- Top 2 most likely outcomes
 
-Machine settings
+### Model Deployment
+```python
+# Load the saved model
+loaded_model = pickle.load(open('finalized_model.pkl', 'rb'))
 
-These features are used to train the predictive maintenance model.
+# Launch the interface
+demo = gr.Interface(
+    fn=predict,
+    inputs=[
+        gr.Slider(100, 350, label="Air temperature"),
+        gr.Slider(100, 350, label="Process temperature"),
+        gr.Number(label="Rotational speed"),
+        gr.Number(label="Torque"),
+        gr.Number(label="Tool wear"),
+        gr.Radio(["L", "M", "H"], label="Type")
+    ],
+    outputs=[
+        gr.Label(num_top_classes=2, label="Result"), 
+        gr.components.Textbox(label="Action")
+    ]
+)
+demo.launch()
+```
 
-Project Structure
-The project repository contains the following files and directories:
+## Usage
+1. Clone this repository:
+```bash
+git clone [repository-url]
+```
 
-Dmt_project.ipynb: The Jupyter Notebook containing all the code and analysis for the project.
+2. Navigate to the project directory:
+```bash
+cd predictive-maintenance-analysis
+```
 
-data/: Directory containing the dataset.
+3. Install requirements:
+```bash
+pip install -r requirements.txt
+```
 
-models/: Directory where trained models are saved.
+4. Run the Jupyter notebook for analysis:
+```bash
+jupyter notebook
+```
 
-results/: Directory where results and visualizations are saved.
+5. Launch the prediction interface:
+```bash
+python app.py
+```
 
-README.md: This file.
+## Results
+- Successfully implemented and compared multiple machine learning models
+- Handled class imbalance using SVMSMOTE oversampling
+- Created interactive interface for real-time predictions
+- Model comparison results stored in model_performance DataFrame
+- Deployed best performing model using Gradio interface
 
-Installation
-To run this project, you need to have Python and Jupyter Notebook installed. You can install the necessary packages using the following command:
+### Model Performance Comparison
+- Decision Tree: Baseline model with good interpretability
+- KNN: Effective for local pattern recognition
+- Random Forest: Robust ensemble performance
+- Gradient Boosting: High accuracy with gradient optimization
+- Gaussian Naive Bayes: Fast training and prediction times
 
-Usage
-To run the project, open Dmt_project.ipynb in Jupyter Notebook and execute the cells. The notebook is organized into the following sections:
+## Contributing
+Feel free to fork this repository and submit pull requests. For major changes, please open an issue first to discuss what you would like to change.
 
-Data Preprocessing: Load and preprocess the dataset.
-
-Exploratory Data Analysis (EDA): Analyze and visualize the data to understand patterns and relationships.
-
-Model Training: Train machine learning models for predictive maintenance.
-
-Model Evaluation: Evaluate the performance of the trained models.
-
-Results and Visualization: Visualize the results and insights obtained from the models.
-
-Results
-The predictive maintenance model successfully identifies potential failures and maintenance needs for the milling machine. The results are visualized in the notebook, showing the accuracy and performance metrics of the model.
-
-Contributing
-Contributions are welcome! If you have any suggestions or improvements, please create a pull request or open an issue.
-
-License
-This project is licensed under the MIT License.
